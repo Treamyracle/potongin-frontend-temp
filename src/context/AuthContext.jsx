@@ -8,17 +8,13 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        checkUser();
-    }, []);
-
     const checkUser = async () => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
                 const { data } = await api.get('/api/v1/me');
                 setUser(data);
-            } catch (error) {
+            } catch {
                 localStorage.removeItem('token');
                 setUser(null);
             }
@@ -26,6 +22,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     };
 
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        checkUser();
+    }, []);
     const login = async (email, password) => {
         try {
             const { data } = await api.post('/login', { email, password });
@@ -63,4 +63,5 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
